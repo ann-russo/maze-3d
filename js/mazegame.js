@@ -37,12 +37,11 @@ var Game = function(args)
     dolly.rotation.order = "ZYX";
     
     dolly.add( camera );
-    
+
     this.player.update = function()
     {
         this.dolly.position.copy( this.position );
 
-        // TODO: I don't know if this will provide problems in actual VR
         this.dolly.rotation.y = this.theta;
         this.dolly.rotation.x = this.phi;
         
@@ -401,12 +400,23 @@ Game.prototype.onXRSessionChange = function( sessionType ) {
 
 Game.prototype.playerCollides = function( dir, amount )
 {
+    // Erstelle einen Raycaster, um Kollisionen des Spielers mit Hindernissen zu prüfen.
     var ray = new THREE.Raycaster( this.player.position, dir, 0, amount + 0.14 );
 
+    // Führe eine Kollisionsüberprüfung durch, indem du den Raycaster gegen eine Liste von Hindernissen (this.walls) prüfst.
     var colliders = ray.intersectObjects( this.walls, false );
 
-    return (colliders.length > 0 && colliders[0].distance - 0.5 < amount);
+    // Wenn eine Kollision erkannt wird, spiele den Sound ab und gib true zurück.
+    if (colliders.length > 0 && colliders[0].distance - 0.5 < amount) {
+        const collide_sound = new Audio('res/toutchie.mp3'); // Ersetze 'your_sound.mp3' durch den Pfad zur Sounddatei
+        collide_sound.volume = 0.2; // Einstellen der Lautstärke (0-1)
+        collide_sound.load();
+        collide_sound.play();
+        return true;
+    }
+    return false;
 };
+
 
 Game.prototype.update = function( delta )
 {
