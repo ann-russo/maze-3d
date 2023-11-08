@@ -1,3 +1,5 @@
-# maze-3d
+This is a javascript [Three.js](http://threejs.org/) maze game made for fun. :snake:
 
-A project for a Maze 3D game in ThreeJS
+Inspiration came from [akersten's mazegame](https://github.com/akersten/mazegame).
+
+Demo: http://joppiesaus.github.io/mazegame
