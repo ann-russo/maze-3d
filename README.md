@@ -1,5 +1,6 @@
-This is a javascript [Three.js](http://threejs.org/) maze game made for fun. :snake:
+TO DO:
 
-Inspiration came from [akersten's mazegame](https://github.com/akersten/mazegame).
-
-Demo: http://joppiesaus.github.io/mazegame
+1) Torch Modell importieren und verwenden
+2) Cake am Ende des Spiels zeigen
+3) Sound einbinden
+4) Andere Texturen/Farben suchen für Wände/Boden (Grafik ändern)
