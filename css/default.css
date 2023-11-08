@@ -1,0 +1,126 @@
+html, body {
+  margin: 0;
+}
+
+body {
+  font-family: "sans-serif";
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.button {
+  background: rgba(211, 211, 211, 0.75);
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.button:hover {
+  background: rgba(211, 211, 211, 1);
+}
+
+.style-select {
+  background: rgba(238, 238, 238, 0.75);
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  display: inline-block;
+  overflow: hidden;
+  width: 120px;
+}
+
+.style-select select {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  font-size: 12pt;
+  padding: 5px 8px;
+  width: 100%;
+}
+
+.style-select select:focus {
+  outline: none;
+}
+
+#ui {
+  height: 100%;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+#ui h1 {
+  font-size: 36pt;
+  text-align: center;
+  color: white;
+}
+
+#ui #controls {
+  background: rgba(64, 64, 64, 0.5);
+  border-radius: 5px;
+  box-sizing: border-box;
+  left: 1em;
+  padding: 1em;
+  position: absolute;
+  width: 15em;
+  color: white;
+}
+
+#ui #controls h3 {
+  text-align: center;
+}
+
+#ui #controls .control-description {
+  margin-left: 1em;
+}
+
+#ui #game-info {
+  background: rgba(64, 64, 64, 0.5);
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 1em;
+  position: absolute;
+  right: 1em;
+  width: 30em;
+}
+
+#ui #game-info h2,
+#ui #game-info h3 {
+  text-align: center;
+}
+
+#ui #game-info p {
+  font-size: 12pt;
+  margin-top: 2em;
+}
+
+#ui #overlay {
+  background: rgba(64, 64, 64, 0.75);
+  border-radius: 5px;
+  box-sizing: border-box;
+  left: 50%;
+  padding: 1em;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -75%);
+  width: 36em;
+}
+
+#ui #overlay #overlay-board-selector {
+  font-size: 16pt;
+  font-weight: bold;
+}
+
+#ui #overlay #overlay-board-selector #overlay-play-button {
+  margin-top: 2em;
+}

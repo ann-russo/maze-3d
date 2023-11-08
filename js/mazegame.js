@@ -435,6 +435,22 @@ Game.prototype.update = function( delta )
             this.player.position.y -= MoveSpeed; // Go down
         }
     }
+    else
+    {
+        if ( InputManager.isKeyDown ( 16 /*shift*/ ) )
+        {
+            MoveSpeed *= 1.7; // Go faster!
+        }
+
+        if ( InputManager.isKeyDown( 32 /*space*/ ) )
+        {
+            this.player.position.y += MoveSpeed; // Go up
+        }
+        else if ( InputManager.isKeyDown( 17 /*ctrl*/ ) )
+        {
+            this.player.position.y -= MoveSpeed; // Go down
+        }
+    }
 
 
 
