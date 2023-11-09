@@ -236,9 +236,9 @@ var Game = function(args)
     mazeGeom.computeBoundingSphere();
 
 
-    var CubeBumpMap = Asset.texture( "bump.png" );
+    var CubeBumpMap = Asset.texture( "bump.jpeg" );
     CubeBumpMap.wrapT = CubeBumpMap.wrapS = THREE.RepeatWrapping;
-    CubeBumpMap.offset.set( 0, 0 );
+    CubeBumpMap.offset.set( 1, 1 );
     CubeBumpMap.repeat.set( 1, 1 );
     //CubeBumpMap.repeat.set( Math.floor( 1 * SCALE.x ), Math.floor( 1 * SCALE.y ) ); // TODO: UV
 
@@ -251,7 +251,7 @@ var Game = function(args)
         side: THREE.DoubleSide
     } );
     CubeMaterial.displacementMap = CubeBumpMap;
-    CubeMaterial.displacementScale = 23;
+    CubeMaterial.displacementScale = 0;
 
 
     var mazeMesh = new THREE.Mesh(
@@ -265,7 +265,7 @@ var Game = function(args)
     {
         for ( var y = 0; y < walls[ x ].length; y++ )
         {
-            if ( !walls[ x ][ y ] && rnd( 20 ) === 0 )
+            if ( !walls[ x ][ y ] && rnd( 10 ) === 0 )
             {
                 // Add random torches!
                 var options = [];
@@ -299,14 +299,14 @@ var Game = function(args)
     // I do not like this code
     var MazePlane = new THREE.PlaneGeometry( actualMazeWidth * SCALE.x, actualMazeHeight * SCALE.z );
 
-    var CeilingBumpMap = Asset.texture( "ceiling_bump.png" );
+    var CeilingBumpMap = Asset.texture( "ceiling_bump.jpeg" );
     CeilingBumpMap.wrapT = CeilingBumpMap.wrapS = THREE.RepeatWrapping;
     CeilingBumpMap.repeat.set( actualMazeWidth * SCALE.x, actualMazeHeight * SCALE.z );
 
     var CeilingMaterial = new THREE.MeshPhongMaterial( {
         color: 0xaaaaaa,
         bumpMap: CeilingBumpMap,
-        bumpScale: 0.4,
+        bumpScale: 1,
         shininess: 11
     } );
 
@@ -316,14 +316,14 @@ var Game = function(args)
     scene.add( Ceiling );
 
 
-    var FloorBumpMap = Asset.texture( "floor_bump.png" );
+    var FloorBumpMap = Asset.texture( "floor_bump.jpeg" );
     FloorBumpMap.wrapT = FloorBumpMap.wrapS = THREE.RepeatWrapping;
     FloorBumpMap.repeat.set( actualMazeWidth, actualMazeHeight );
 
     var FloorMaterial = new THREE.MeshPhongMaterial( {
         color: 0xb0b0b0,
         bumpMap: FloorBumpMap,
-        bumpScale: 0.64,
+        bumpScale: 1,
         shininess: 10
     } );
 
@@ -334,7 +334,7 @@ var Game = function(args)
     
     var OutsideFloorSize = Math.max( 50, actualMazeWidth, actualMazeHeight ) * 2 * avgScaleXZ;
     
-    var OutsideFloorTexture = Asset.texture( "floor.gif" );
+    var OutsideFloorTexture = Asset.texture( "grass-floor.jpg" );
     OutsideFloorTexture.wrapT = OutsideFloorTexture.wrapS = THREE.RepeatWrapping;
     OutsideFloorTexture.repeat.set( Math.floor( OutsideFloorSize * 2 / SCALE.x ), Math.floor( OutsideFloorSize * 2 / SCALE.z ) );
     
