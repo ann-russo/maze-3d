@@ -27,7 +27,7 @@ var Game = function(args)
     var light = new THREE.AmbientLight( 0x303030 );
     scene.add( light );
 
-    this.player.light = new THREE.PointLight( 0xF5D576, 1 * SCALE.average(), 2.5899 * SCALE.average() );
+    this.player.light = new THREE.PointLight( 0xF5D576, 1.2 * SCALE.average(), 2.5899 * SCALE.average() );
     
     var dolly = new THREE.Group();
     
