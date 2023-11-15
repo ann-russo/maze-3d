@@ -66,7 +66,7 @@ var init = function()
     }
     
     
-    g = new Game( args ); // TODO: Make difficulty selection
+    g = new Game( args );
     
         
 };

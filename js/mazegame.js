@@ -1,5 +1,6 @@
 var SCALE = new THREE.Vector3( 1, 1, 1 ); // TODO: Fix that SCALE.x needs to equal SCALE.z
-
+var maze;
+var gamewon = false;
 var Game = function(args)
 {
     this.controllers = [];
@@ -76,7 +77,7 @@ var Game = function(args)
     
     this.dolly = dolly;
 
-    var maze = generateMaze( args.width, args.height );
+    maze = generateMaze( args.width, args.height );
     var mazeWalls = [];
 
 
@@ -261,7 +262,6 @@ var Game = function(args)
     CubeBumpMap.wrapT = CubeBumpMap.wrapS = THREE.RepeatWrapping;
     CubeBumpMap.offset.set( 1, 1 );
     CubeBumpMap.repeat.set( 1, 1 );
-    //CubeBumpMap.repeat.set( Math.floor( 1 * SCALE.x ), Math.floor( 1 * SCALE.y ) ); // TODO: UV
 
 
     var CubeMaterial = new THREE.MeshPhongMaterial( {
@@ -302,7 +302,6 @@ var Game = function(args)
                     options.push( Direction.North );
 
                 // There's always a possibility, no need to check
-                // TODO: torch optimizing(render distance)
                 torchBuilder.addTorch( new THREE.Vector3( x, 0, y ), DirectionToAngle( options.randomElement() ) );
             }
         }
@@ -313,7 +312,7 @@ var Game = function(args)
     
     torchBuilder.finish();
 
-    // TODO: Performance. Maybe chunks? Maybe different algorithm?
+
     mazeWalls.push( mazeMesh );
     this.walls = mazeWalls;
 
@@ -418,6 +417,9 @@ Game.prototype.onXRSessionChange = function( sessionType ) {
     }
     
 };
+var collission_counter = 0;
+const collide_sound = new Audio('res/toutchie.mp3');
+collide_sound.load();
 
 Game.prototype.playerCollides = function( dir, amount )
 {
@@ -427,13 +429,44 @@ Game.prototype.playerCollides = function( dir, amount )
     // Führe eine Kollisionsüberprüfung durch, indem du den Raycaster gegen eine Liste von Hindernissen (this.walls) prüfst.
     var colliders = ray.intersectObjects( this.walls, false );
 
+    // Überprüfe, ob der Spieler die Zielposition erreicht hat (z.B., Koordinaten walls[maze.width * 2 - 1][maze.height * 2]).
+    var targetPosition = new THREE.Vector3(maze.width * 2 - 1, 0, maze.height * 2); // Zielposition
+    var playerPosition = this.player.position.clone();
+    playerPosition.y = 0; // Setze die Y-Koordinate auf 0, wenn sie nicht benötigt wird.
+
+    var distanceToTarget = playerPosition.distanceTo(targetPosition);
+
     // Wenn eine Kollision erkannt wird, spiele den Sound ab und gib true zurück.
-    if (colliders.length > 0 && colliders[0].distance - 0.5 < amount) {
-        const collide_sound = new Audio('res/toutchie.mp3'); // Ersetze 'your_sound.mp3' durch den Pfad zur Sounddatei
-        collide_sound.volume = 0.2; // Einstellen der Lautstärke (0-1)
-        collide_sound.load();
-        collide_sound.play();
+    if (colliders.length > 0 && colliders[0].distance - 0.5 < amount){
+        collide_sound.volume = 1; // Einstellen der Lautstärke (0-1)
+        if (collide_sound.ended || collission_counter === 0) {
+            collide_sound.play().then(r => console.log("Played collision sound"));
+            collission_counter++;
+        }
         return true;
+    };
+    if (gamewon === false && distanceToTarget < 1.0) {
+        gamewon = true;
+        console.log("Spieler hat die Zielposition erreicht!");
+        // Hier könntest du weitere Aktionen ausführen, wenn der Spieler die Zielposition erreicht hat.
+        const success_sound = new Audio('res/duft_des_sieges.mp3');
+        success_sound.volume = 0.5; // Einstellen der Lautstärke (0-1)
+        success_sound.load();
+        success_sound.play().then(r => console.log("Played success sound"));
+
+        // Hier wird der Text "Du hast gewonnen!" angezeigt Y und X achse zentriert im window.
+        var win_quote = document.createElement('div');
+        win_quote.style.position = 'absolute';
+        win_quote.style.width = 100;
+        win_quote.style.height = 100;
+        win_quote.style.color = "yellow";
+        win_quote.style.fontSize = "50px";
+        win_quote.style.top = 50 + '%';
+        win_quote.style.left = 50 + '%';
+        win_quote.style.transform = 'translate(-50%, -50%)';
+        win_quote.innerHTML = "You win!";
+        document.body.appendChild(win_quote);
+
     }
     return false;
 };
