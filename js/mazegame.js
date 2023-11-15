@@ -516,6 +516,7 @@ Game.prototype.playerCollides = function( dir, amount )
     playerPosition.y = 0; // Set the Y-coordinate to 0 if not needed.
 
     var distanceToTarget = playerPosition.distanceTo(targetPosition);
+    var distanceToEntrance = playerPosition.distanceTo(new THREE.Vector3(0, 0, 0));
 
     // If a collision is detected, play the sound and return true.
     if (colliders.length > 0 && colliders[0].distance - 0.5 < amount){
@@ -581,6 +582,21 @@ Game.prototype.playerCollides = function( dir, amount )
         win_quote.innerHTML = "You win!";
         document.body.appendChild(win_quote);
     }
+    //Check if Player left the maze at the entrance and play sound if the entrance_cpunter is over 0 TODO: fix the sound
+    var entrance_counter = 0;
+    if (distanceToEntrance < 1.0) {
+        if (entrance_counter > 0) {
+            const left_by_entrance_sound = new Audio('res/sound/nur_gschaut.mp3');
+            left_by_entrance_sound.volume = 1; // Adjust the volume if needed
+            left_by_entrance_sound.load();
+            left_by_entrance_sound.play().then(r => console.log("Played entrance sound"));
+        }
+        entrance_counter++;
+    }
+
+
+
+
 
     return false;
 };
