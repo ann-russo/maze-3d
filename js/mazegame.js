@@ -29,8 +29,11 @@ var Game = function(args)
 
     this.player.light = new THREE.PointLight( 0xF5D576, 1.2 * SCALE.average(), 2.5899 * SCALE.average() );
 
-    scene.background = new THREE.Color(0x1F2427); // Dark blue, almost black
+    /*
 
+    // Cube Sky
+
+    scene.background = new THREE.Color(0x1F2427);
     var loader = new THREE.CubeTextureLoader();
     var texture = loader.load([
         "res/sky/sky_rt0001.png", // positive x
@@ -42,13 +45,37 @@ var Game = function(args)
     ]);
     scene.background = texture;
 
-    var moonLight = new THREE.DirectionalLight(0x555577, 0.5); // Softer, darker blue
+    var moonLight = new THREE.DirectionalLight(0x555577, 0.5);
     moonLight.position.set(-1, 1, -1);
     scene.add(moonLight);
 
-    // Fog for atmospheric effect
     scene.fog = new THREE.Fog(0x1F2427, 2, 20);
+    */
 
+    // Sphere Sky
+    var skyTexture = Asset.texture( "sky/beautiful-shining-stars-night-sky.jpg" );
+    skyTexture.wrapS = THREE.RepeatWrapping;
+    skyTexture.wrapT = THREE.RepeatWrapping;
+    skyTexture.repeat.set(2, 2);
+    skyTexture.minFilter = THREE.LinearFilter;
+
+    var skyGeometry = new THREE.SphereGeometry(10000, 100, 80);
+
+    var skyMaterial = new THREE.MeshBasicMaterial({
+        map: skyTexture,
+        side: THREE.BackSide,
+        color: new THREE.Color(0.5, 0.5, 0.5)
+    });
+    var skyMesh = new THREE.Mesh(skyGeometry, skyMaterial);
+
+    var moonLight = new THREE.DirectionalLight(0x555577, 0.5);
+    moonLight.position.set(-1, 1, -1);
+
+    scene.add(moonLight);
+    scene.add(skyMesh);
+
+    camera.fov = 75;
+    camera.updateProjectionMatrix();
 
     var dolly = new THREE.Group();
     
