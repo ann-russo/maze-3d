@@ -1,4 +1,4 @@
-var SCALE = new THREE.Vector3( 1, 1, 1 ); // TODO: Fix that SCALE.x needs to equal SCALE.z
+var SCALE = new THREE.Vector3( 1, 1, 1 );
 var maze;
 var gamewon = false;
 var Game = function(args)
@@ -140,9 +140,8 @@ var Game = function(args)
 
     console.log( walls );
 
-    // oh my the y and height was such a worse mistake
 
-    // ! WALLS ARE Z, X !
+    // ! WALLS ARE Z, X!
 
     var xw = []; // walls along x axis, first dimension is x, second z
     var zw = []; // walls along z axis, first dimension is z, second x
@@ -228,7 +227,7 @@ var Game = function(args)
         ]
     }
     
-    //var SingleWallGeomZ = new THREE.Geometry().fromBufferGeometry( SingleWallGeom.clone().rotateY( Math.TAU / 2 ).translate( 0, 0, -1 ) );
+
     
     var SingleWallGeomZ = new THREE.Geometry().fromBufferGeometry( SingleWallGeom );
     
@@ -343,7 +342,7 @@ var Game = function(args)
     mazeWalls.push( mazeMesh );
     this.walls = mazeWalls;
 
-    // I do not like this code
+
     var MazePlane = new THREE.PlaneGeometry( actualMazeWidth * SCALE.x, actualMazeHeight * SCALE.z );
 
     var CeilingBumpMap = Asset.texture( "ceiling_bump.jpeg" );
@@ -406,10 +405,7 @@ var Game = function(args)
 
 Game.prototype.postXRInit = function() {
     
-    /*if ( WEBXR_PRESENT ) {
-        return;
-    }*/
-     
+
     // Add fullscreen key
     THREEx.FullScreen.bindKey( { charCode : 'f'.charCodeAt( 0 ) } );
 
@@ -445,43 +441,46 @@ Game.prototype.onXRSessionChange = function( sessionType ) {
     
 };
 var collission_counter = 0;
-const collide_sound = new Audio('res/toutchie.mp3');
+const collide_sound = new Audio('res/sound/toutchie.mp3');
 collide_sound.load();
 
 Game.prototype.playerCollides = function( dir, amount )
 {
-    // Erstelle einen Raycaster, um Kollisionen des Spielers mit Hindernissen zu prüfen.
+    // Create a raycaster to check for player collisions with obstacles.
     var ray = new THREE.Raycaster( this.player.position, dir, 0, amount + 0.14 );
 
-    // Führe eine Kollisionsüberprüfung durch, indem du den Raycaster gegen eine Liste von Hindernissen (this.walls) prüfst.
+    // Perform collision detection by checking the raycaster against a list of obstacles (this.walls).
     var colliders = ray.intersectObjects( this.walls, false );
 
-    // Überprüfe, ob der Spieler die Zielposition erreicht hat (z.B., Koordinaten walls[maze.width * 2 - 1][maze.height * 2]).
-    var targetPosition = new THREE.Vector3(maze.width * 2 - 1, 0, maze.height * 2); // Zielposition
+    // Check if the player has reached the target position (e.g., coordinates walls[maze.width * 2 - 1][maze.height * 2]).
+    var targetPosition = new THREE.Vector3(maze.width * 2 - 1, 0, maze.height * 2); // Target position
     var playerPosition = this.player.position.clone();
-    playerPosition.y = 0; // Setze die Y-Koordinate auf 0, wenn sie nicht benötigt wird.
+    playerPosition.y = 0; // Set the Y-coordinate to 0 if not needed.
 
     var distanceToTarget = playerPosition.distanceTo(targetPosition);
 
-    // Wenn eine Kollision erkannt wird, spiele den Sound ab und gib true zurück.
+    // If a collision is detected, play the sound and return true.
     if (colliders.length > 0 && colliders[0].distance - 0.5 < amount){
-        collide_sound.volume = 1; // Einstellen der Lautstärke (0-1)
+        collide_sound.volume = 1; // Set the volume (0-1)
         if (collide_sound.ended || collission_counter === 0) {
             collide_sound.play().then(r => console.log("Played collision sound"));
             collission_counter++;
         }
         return true;
     };
+
+    // Check if the game is not won and the player has reached the target position.
     if (gamewon === false && distanceToTarget < 1.0) {
         gamewon = true;
-        console.log("Spieler hat die Zielposition erreicht!");
-        // Hier könntest du weitere Aktionen ausführen, wenn der Spieler die Zielposition erreicht hat.
-        const success_sound = new Audio('res/duft_des_sieges.mp3');
-        success_sound.volume = 0.5; // Einstellen der Lautstärke (0-1)
+        console.log("Player reached the target position!");
+
+        // You could perform additional actions when the player reaches the target position.
+        const success_sound = new Audio('res/sound/duft_des_sieges.mp3');
+        success_sound.volume = 0.5; // Set the volume (0-1)
         success_sound.load();
         success_sound.play().then(r => console.log("Played success sound"));
 
-        // Hier wird der Text "Du hast gewonnen!" angezeigt Y und X achse zentriert im window.
+        // Display the text "You win!" centered on the Y and X axes in the window.
         var win_quote = document.createElement('div');
         win_quote.style.position = 'absolute';
         win_quote.style.width = 100;
@@ -493,10 +492,11 @@ Game.prototype.playerCollides = function( dir, amount )
         win_quote.style.transform = 'translate(-50%, -50%)';
         win_quote.innerHTML = "You win!";
         document.body.appendChild(win_quote);
-
     }
+
     return false;
 };
+
 
 
 Game.prototype.update = function( delta )
@@ -606,9 +606,6 @@ Game.prototype.update = function( delta )
         this.player.position.z += xProd.z * MoveSpeed;
     }
 
-    /*torches.forEach( function( torch ) {
-        torch.update( delta );
-    } );*/
     this.player.update();
     
     this.xrControls.update( delta );
@@ -618,5 +615,5 @@ Game.prototype.update = function( delta )
 
 Game.prototype.mustRender = function()
 {
-    return true; // huehuehue
+    return true;
 };
