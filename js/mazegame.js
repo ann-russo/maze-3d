@@ -1,6 +1,7 @@
 var SCALE = new THREE.Vector3( 1, 1, 1 ); // TODO: Fix that SCALE.x needs to equal SCALE.z
 var maze;
 var gamewon = false;
+
 var Game = function(args)
 {
     this.controllers = [];
@@ -18,6 +19,7 @@ var Game = function(args)
         position: new THREE.Vector3( -1.5, 0.1, 1 )
             .multiply( SCALE ),
         theta: Math.PI * 1.5,
+        health: 3,
         phi: 0
     };
     
@@ -469,6 +471,21 @@ Game.prototype.playerCollides = function( dir, amount )
         if (collide_sound.ended || collission_counter === 0) {
             collide_sound.play().then(r => console.log("Played collision sound"));
             collission_counter++;
+            this.player.health--;
+            if(this.player.health == 0) {
+                var lose_quote = document.createElement('div');
+                lose_quote.style.position = 'absolute';
+                lose_quote.style.width = 100;
+                lose_quote.style.height = 100;
+                lose_quote.style.color = "red";
+                lose_quote.style.fontSize = "50px";
+                lose_quote.style.top = 50 + '%';
+                lose_quote.style.left = 50 + '%';
+                lose_quote.style.transform = 'translate(-50%, -50%)';
+                lose_quote.innerHTML = "You Lost!";
+                document.body.appendChild(lose_quote);
+                this.player.position = 0;
+            }
         }
         return true;
     };
@@ -493,7 +510,6 @@ Game.prototype.playerCollides = function( dir, amount )
         win_quote.style.transform = 'translate(-50%, -50%)';
         win_quote.innerHTML = "You win!";
         document.body.appendChild(win_quote);
-
     }
     return false;
 };
