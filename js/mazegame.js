@@ -2,6 +2,18 @@ var SCALE = new THREE.Vector3( 1, 1, 1 );
 var maze;
 var gamewon = false;
 
+//Play start voice
+var start_voice = new Audio('res/sound/get_ready.mp3');
+start_voice.volume = 0.7;
+start_voice.play();
+
+//Play theme song
+theme_sound.volume = 0.2;
+theme_sound.loop = true;
+theme_sound.play();
+
+
+
 // Create an array to store heart elements
 var heartElements = [];
 
@@ -447,17 +459,6 @@ var Game = function(args)
     };
 
     document.body.appendChild(sound_button);
-    //Play start voice
-    var start_voice = new Audio('res/sound/get_ready.mp3');
-    start_voice.volume = 0.7;
-    start_voice.play();
-
-    //Play theme song
-    theme_sound.volume = 0.2;
-    theme_sound.loop = true;
-    theme_sound.play();
-
-
 };
 
 Game.prototype.postXRInit = function() {
