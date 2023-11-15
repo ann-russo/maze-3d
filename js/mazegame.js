@@ -532,7 +532,7 @@ Game.prototype.playerCollides = function( dir, amount )
                 //Play lose voice and song
                 theme_sound.pause();
                 var lose_voice = new Audio('res/sound/Evil_Laugh.mp3');
-                lose_voice.volume = 0.7;
+                lose_voice.volume = 0.5;
                 lose_voice.play();
                 var lose_song = new Audio('res/sound/Titanic_Song.mp3');
                 lose_song.volume = 1;
@@ -564,7 +564,7 @@ Game.prototype.playerCollides = function( dir, amount )
 
         // You could perform additional actions when the player reaches the target position.
         const success_sound = new Audio('res/sound/duft_des_sieges.mp3');
-        success_sound.volume = 0.5; // Set the volume (0-1)
+        success_sound.volume = 1; // Set the volume (0-1)
         success_sound.load();
         success_sound.play().then(r => console.log("Played success sound"));
 
@@ -667,6 +667,7 @@ Game.prototype.update = function( delta )
         // Move forward
         this.player.position.x += dir.x * MoveSpeed;
         this.player.position.z += dir.z * MoveSpeed;
+
     }
     else if ( (
             InputManager.isKeyDown( 83 /* s */ ) ||

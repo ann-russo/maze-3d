@@ -5,9 +5,6 @@ var InputManager =
 
     update: function()
     {
-        /* of course, I could make another array,
-           holding the indexes, iterating trough them...
-           but I don't know what's a better solution. */
         this.oldKeys = this.keys.clone();
     },
 
