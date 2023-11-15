@@ -488,11 +488,11 @@ Game.prototype.onXRSessionChange = function( sessionType ) {
     // Lower the ground level for XR
     if ( sessionType === "sessionStarted" ) {
         
-        g.player.position.y = ( -1 / 2 + 0.08 ) * SCALE.y;
+        gameObject.player.position.y = ( -1 / 2 + 0.08 ) * SCALE.y;
         
     } else if ( sessionType === "sessionEnded" ) {
         
-        g.player.position.y = 0;
+        gameObject.player.position.y = 0;
         
     }
     
@@ -604,7 +604,7 @@ Game.prototype.playerCollides = function( dir, amount )
 // Function to update hearts based on player's health
 const updateHearts = () => {
     for (let i = 0; i < heartElements.length; i++) {
-        if (i < g.player.health) {
+        if (i < gameObject.player.health) {
             heartElements[i].style.display = 'block'; // Show the heart
         } else {
             heartElements[i].style.display = 'none'; // Hide the heart

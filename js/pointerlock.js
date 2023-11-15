@@ -18,10 +18,10 @@ var PointerLock = function( args )
         var movementX = event.movementX || event.mozMovementX || 0;
         var movementY = event.movementY || event.mozMovementY || 0;
 
-        g.player.theta -= movementX * scope.sensitivity;
-        g.player.phi -= movementY * scope.sensitivity;
+        gameObject.player.theta -= movementX * scope.sensitivity;
+        gameObject.player.phi -= movementY * scope.sensitivity;
 
-        g.player.phi = Math.constrainRadius( g.player.phi, Math.TAU / 4 );
+        gameObject.player.phi = Math.constrainRadius( gameObject.player.phi, Math.TAU / 4 );
     }
 
     document.addEventListener( "mousemove", onMouseMove, false );
