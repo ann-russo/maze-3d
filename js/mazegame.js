@@ -2,6 +2,9 @@ var SCALE = new THREE.Vector3( 1, 1, 1 );
 var maze;
 var gamewon = false;
 
+// Create an array to store heart elements
+var heartElements = [];
+
 var Game = function(args)
 {
     this.controllers = [];
@@ -22,15 +25,27 @@ var Game = function(args)
         health: 3,
         phi: 0
     };
-    
-    
 
     Asset.init();
+
+    for (var i = 0; i < this.player.health; i++) {
+        var heart = document.createElement('img');
+        heart.src = 'res/heart.png';
+        heart.style.width = '30px'; // Adjust the width based on your preference
+        heart.style.height = '30px'; // Adjust the height based on your preference
+        heart.style.position = 'absolute';
+        heart.style.top = '10px'; // Adjust the top position based on your preference
+        heart.style.right = (i * 40 + 10) + 'px'; // Adjust the right position for spacing
+        document.body.appendChild(heart);
+        heartElements.push(heart);
+    }
 
     var light = new THREE.AmbientLight(0x202020);
     scene.add( light );
 
     this.player.light = new THREE.PointLight( 0xF5D576, 1.2 * SCALE.average(), 2.5899 * SCALE.average() );
+
+
 
     /*
 
@@ -448,6 +463,7 @@ collide_sound.load();
 
 Game.prototype.playerCollides = function( dir, amount )
 {
+
     // Create a raycaster to check for player collisions with obstacles.
     var ray = new THREE.Raycaster( this.player.position, dir, 0, amount + 0.14 );
 
@@ -468,6 +484,7 @@ Game.prototype.playerCollides = function( dir, amount )
             collide_sound.play().then(r => console.log("Played collision sound"));
             collission_counter++;
             this.player.health--;
+            updateHearts();
             if(this.player.health == 0) {
                 var lose_quote = document.createElement('div');
                 lose_quote.style.position = 'absolute';
@@ -514,7 +531,16 @@ Game.prototype.playerCollides = function( dir, amount )
     return false;
 };
 
-
+// Function to update hearts based on player's health
+const updateHearts = () => {
+    for (let i = 0; i < heartElements.length; i++) {
+        if (i < g.player.health) {
+            heartElements[i].style.display = 'block'; // Show the heart
+        } else {
+            heartElements[i].style.display = 'none'; // Hide the heart
+        }
+    }
+};
 
 Game.prototype.update = function( delta )
 {
