@@ -24,11 +24,32 @@ var Game = function(args)
 
     Asset.init();
 
-    var light = new THREE.AmbientLight( 0x303030 );
+    var light = new THREE.AmbientLight(0x202020);
     scene.add( light );
 
     this.player.light = new THREE.PointLight( 0xF5D576, 1.2 * SCALE.average(), 2.5899 * SCALE.average() );
-    
+
+    scene.background = new THREE.Color(0x1F2427); // Dark blue, almost black
+
+    var loader = new THREE.CubeTextureLoader();
+    var texture = loader.load([
+        "res/sky/sky_rt0001.png", // positive x
+        "res/sky/sky_lf0001.png", // negative x
+        "res/sky/sky_up0001.png", // positive y
+        "res/sky/sky_dn0001.png", // negative y
+        "res/sky/sky_ft0001.png", // positive z
+        "res/sky/sky_bk0001.png", // negative z
+    ]);
+    scene.background = texture;
+
+    var moonLight = new THREE.DirectionalLight(0x555577, 0.5); // Softer, darker blue
+    moonLight.position.set(-1, 1, -1);
+    scene.add(moonLight);
+
+    // Fog for atmospheric effect
+    scene.fog = new THREE.Fog(0x1F2427, 2, 20);
+
+
     var dolly = new THREE.Group();
     
     dolly.add( this.player.light );
