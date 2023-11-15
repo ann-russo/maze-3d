@@ -2,14 +2,23 @@ var TorchBuilder = function() {
 
     this.initialTorchPos = new THREE.Vector3( 0.45 * SCALE.x, 0.18 * SCALE.y, 0 );
     this.initialLightPos = new THREE.Vector3( 0.37 * SCALE.x, (0.18 + 0.2) * SCALE.y, 0 );
+    var torchGeometry = new THREE.BoxGeometry(0.03 * SCALE.x, 0.25 * SCALE.y, 0.07 * SCALE.z);
 
+    // Load wood texture
+    var woodTexture = new THREE.TextureLoader().load('res/wood.jpeg');
+    woodTexture.wrapS = THREE.RepeatWrapping;
+    woodTexture.wrapT = THREE.RepeatWrapping;
+    woodTexture.repeat.set(2, 2);
 
-    // TODO: Too much hard-coded. It depends on the wall sizes, too.
-    var torchGeometry = new THREE.BoxGeometry( 0.07 * SCALE.x, 0.35 * SCALE.y, 0.07 * SCALE.z );
-    var torchMaterial = new THREE.MeshNormalMaterial();
+    var torchMaterial = new THREE.MeshStandardMaterial({
+        map: woodTexture,
+        color: 0xffffff, // Set a base color if the texture is not fully covering the geometry
+        roughness: 0.8, // Adjust the roughness for a more realistic look
+        metalness: 0.2, // Adjust the metalness for a more realistic look
+    });
 
-    this.torchMesh = new THREE.Mesh( torchGeometry, torchMaterial );
-    this.torchLight = new THREE.PointLight( 0xFF6600, 1 * SCALE.average(), 2 * SCALE.average() );
+    this.torchMesh = new THREE.Mesh(torchGeometry, torchMaterial);
+    this.torchLight = new THREE.PointLight(0xFF6600, 1 * SCALE.average(), 2 * SCALE.average());
     this.geometry = new THREE.Geometry();
 
     this.torches = [];
