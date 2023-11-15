@@ -112,14 +112,6 @@ var onWindowResize = function()
 
 var start = function()
 {
-    //Play the soundtrack
-    var start_voice = new Audio('res/sound/get_ready.mp3');
-    start_voice.volume = 0.7;
-    start_voice.play();
-    var theme_sound = new Audio('res/sound/theme_Song.m4a');
-    theme_sound.volume = 0.2;
-    theme_sound.loop = true;
-    theme_sound.play();
     timer.start();
 };
 

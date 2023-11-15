@@ -5,8 +5,11 @@ var gamewon = false;
 // Create an array to store heart elements
 var heartElements = [];
 
+var theme_sound = new Audio('res/sound/theme_Song.m4a');
+
 var Game = function(args)
 {
+
     this.controllers = [];
     
     if ( args.scale ) {
@@ -418,6 +421,43 @@ var Game = function(args)
     
     this.MOVESPEED = 1.5 * avgScaleXZ;
 
+
+    // Button and shortcut to disable sound
+    var sound_button = document.createElement('button');
+    sound_button.style.position = 'absolute';
+    sound_button.style.width = '100px'; // Set the width as a string with 'px'
+    sound_button.style.height = '50px'; // Adjusted the height for a more balanced look
+    sound_button.style.backgroundColor = 'transparent'; // Transparent background
+    sound_button.style.border = '2px solid #4CAF50'; // Green border
+    sound_button.style.color = '#4CAF50'; // Green text color
+    sound_button.style.fontSize = '20px'; // Adjusted font size
+    sound_button.style.borderRadius = '8px'; // Rounded corners
+    sound_button.style.cursor = 'pointer'; // Set cursor to pointer for better UX
+    sound_button.style.top = '10px'; // Adjusted top position
+    sound_button.style.left = '10px'; // Adjusted left position
+    sound_button.innerHTML = 'Sound on'; // Changed initial text
+    sound_button.onclick = function() {
+        if (theme_sound.muted) {
+            theme_sound.muted = false;
+            sound_button.innerHTML = 'Sound on';
+        } else {
+            theme_sound.muted = true;
+            sound_button.innerHTML = 'Sound off';
+        }
+    };
+
+    document.body.appendChild(sound_button);
+    //Play start voice
+    var start_voice = new Audio('res/sound/get_ready.mp3');
+    start_voice.volume = 0.7;
+    start_voice.play();
+
+    //Play theme song
+    theme_sound.volume = 0.2;
+    theme_sound.loop = true;
+    theme_sound.play();
+
+
 };
 
 Game.prototype.postXRInit = function() {
@@ -481,11 +521,24 @@ Game.prototype.playerCollides = function( dir, amount )
     if (colliders.length > 0 && colliders[0].distance - 0.5 < amount){
         collide_sound.volume = 1; // Set the volume (0-1)
         if (collide_sound.ended || collission_counter === 0) {
-            collide_sound.play().then(r => console.log("Played collision sound"));
             collission_counter++;
             this.player.health--;
-            updateHearts();
-            if(this.player.health == 0) {
+            if (this.player.health > 0) {
+                collide_sound.play().then(r => console.log("Played collision sound"));
+            }
+
+            else{
+
+                //Play lose voice and song
+                theme_sound.pause();
+                var lose_voice = new Audio('res/sound/Evil_Laugh.mp3');
+                lose_voice.volume = 0.7;
+                lose_voice.play();
+                var lose_song = new Audio('res/sound/Titanic_Song.mp3');
+                lose_song.volume = 1;
+                lose_song.play();
+
+                //display lose text and set the player ins nirvana
                 var lose_quote = document.createElement('div');
                 lose_quote.style.position = 'absolute';
                 lose_quote.style.width = 100;
@@ -499,6 +552,7 @@ Game.prototype.playerCollides = function( dir, amount )
                 document.body.appendChild(lose_quote);
                 this.player.position = 0;
             }
+            updateHearts();
         }
         return true;
     };
