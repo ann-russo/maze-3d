@@ -24,10 +24,10 @@ var Game = function(args)
 
     Asset.init();
 
-    var light = new THREE.AmbientLight( 0x808080 );
+    var light = new THREE.AmbientLight( 0x303030 );
     scene.add( light );
 
-    this.player.light = new THREE.PointLight( 0xF5D576, 0.5 * SCALE.average(), 1.5899 * SCALE.average() );
+    this.player.light = new THREE.PointLight( 0xF5D576, 1 * SCALE.average(), 2.5899 * SCALE.average() );
     
     var dolly = new THREE.Group();
     

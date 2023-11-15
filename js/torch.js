@@ -9,7 +9,7 @@ var TorchBuilder = function() {
     var torchMaterial = new THREE.MeshNormalMaterial();
 
     this.torchMesh = new THREE.Mesh( torchGeometry, torchMaterial );
-    this.torchLight = new THREE.PointLight( 0xFF6600, 2 * SCALE.average(), 2 * SCALE.average() );
+    this.torchLight = new THREE.PointLight( 0xFF6600, 1 * SCALE.average(), 2 * SCALE.average() );
     this.geometry = new THREE.Geometry();
 
     this.torches = [];
