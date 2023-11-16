@@ -531,7 +531,7 @@ function playWalkingSound(moveSpeed) {
 
         // Create a gain node to control the volume
         var walkingGainNode = walkingAudioContext.createGain();
-        walkingGainNode.gain.value = 1; // You can adjust the volume here
+        walkingGainNode.gain.value = 0.5; // You can adjust the volume here
 
         walkingSource.connect(walkingGainNode);
         walkingGainNode.connect(walkingAudioContext.destination);
