@@ -501,6 +501,72 @@ var collission_counter = 0;
 const collide_sound = new Audio('res/sound/toutchie.mp3');
 collide_sound.load();
 
+// Define the audio context and variables for walking sound
+var walkingAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+var walkingBuffer;
+var walkingSource;
+
+// Load the walking sound file
+var walkingSoundUrl = 'res/sound/walking.mp3';
+var walkingRequest = new XMLHttpRequest();
+walkingRequest.open('GET', walkingSoundUrl, true);
+walkingRequest.responseType = 'arraybuffer';
+
+walkingRequest.onload = function () {
+    walkingAudioContext.decodeAudioData(walkingRequest.response, function (buffer) {
+        walkingBuffer = buffer;
+    });
+};
+
+walkingRequest.send();
+
+// Function to play the walking sound
+function playWalkingSound(moveSpeed) {
+    // Check if the character is currently moving
+    if (!walkingSource) {
+        // Create a new buffer source
+        walkingSource = walkingAudioContext.createBufferSource();
+        walkingSource.buffer = walkingBuffer;
+        walkingSource.loop = true;
+
+        // Create a gain node to control the volume
+        var walkingGainNode = walkingAudioContext.createGain();
+        walkingGainNode.gain.value = 1; // You can adjust the volume here
+
+        walkingSource.connect(walkingGainNode);
+        walkingGainNode.connect(walkingAudioContext.destination);
+
+        // Check if moveSpeed is a valid number
+        if (!isNaN(moveSpeed) && isFinite(moveSpeed)) {
+            // Adjust the playback rate based on the move speed
+            var speedMultiplier = 100;
+            var playbackRateValue = 0.4 * moveSpeed * speedMultiplier;
+
+            walkingSource.playbackRate.value = playbackRateValue;
+
+            // Start the new source
+            walkingSource.start(0);
+        }
+    } else {
+        // Check if moveSpeed is a valid number before adjusting the playback rate while walking
+        if (!isNaN(moveSpeed) && isFinite(moveSpeed)) {
+            var speedMultiplier = 100;
+            var playbackRateValue = 0.4 * moveSpeed * speedMultiplier;
+
+            walkingSource.playbackRate.value = playbackRateValue;
+        }
+    }
+}
+
+
+// Function to stop the walking sound
+function stopWalkingSound() {
+    if (walkingSource && walkingAudioContext.state === 'running') {
+        walkingSource.stop(0);
+        walkingSource = null; // Reset the source
+    }
+}
+
 Game.prototype.playerCollides = function( dir, amount )
 {
 
@@ -616,7 +682,22 @@ Game.prototype.update = function( delta )
 {
     var MoveSpeed = this.MOVESPEED * delta;
     var KeyRotateSpeed = 1.4 * delta;
+    // Check if the player is currently moving
+    var isMoving =
+        InputManager.isKeyDown(87) ||
+        InputManager.isKeyDown(83) ||
+        InputManager.isKeyDown(65) ||
+        InputManager.isKeyDown(68) ||
+        InputManager.isKeyDown(38) ||
+        InputManager.isKeyDown(40) ||
+        InputManager.isKeyDown(37) ||
+        InputManager.isKeyDown(39);
 
+    if (isMoving) {
+        playWalkingSound(MoveSpeed);
+    } else {
+        stopWalkingSound();
+    }
     // debux hax
     if ( InputManager.isKeyPressed( 113 /*f2*/ ) )
     {
@@ -647,8 +728,6 @@ Game.prototype.update = function( delta )
         }
     }
 
-
-
     if ( InputManager.isKeyDown( 81 /*q*/ ) )
     {
         this.player.theta += KeyRotateSpeed; /* turn left */
@@ -674,7 +753,7 @@ Game.prototype.update = function( delta )
         // Move forward
         this.player.position.x += dir.x * MoveSpeed;
         this.player.position.z += dir.z * MoveSpeed;
-
+        playWalkingSound(MoveSpeed);
     }
     else if ( (
             InputManager.isKeyDown( 83 /* s */ ) ||
@@ -685,6 +764,7 @@ Game.prototype.update = function( delta )
         // Move backward
         this.player.position.x -= dir.x * MoveSpeed;
         this.player.position.z -= dir.z * MoveSpeed;
+        playWalkingSound(MoveSpeed);
     }
 
     var xProd = new THREE.Vector3();
@@ -699,9 +779,10 @@ Game.prototype.update = function( delta )
         // Move left
         this.player.position.x -= xProd.x * MoveSpeed;
         this.player.position.z -= xProd.z * MoveSpeed;
+        playWalkingSound(MoveSpeed);
     }
     else if ( (
-            InputManager.isKeyDown( 68 /*d*/ ) || 
+            InputManager.isKeyDown( 68 /*d*/ ) ||
             InputManager.isKeyDown( 39 /* arrow key right */ )
               ) &&
               !this.playerCollides( xProd, MoveSpeed ) )
@@ -709,10 +790,11 @@ Game.prototype.update = function( delta )
         // Move right
         this.player.position.x += xProd.x * MoveSpeed;
         this.player.position.z += xProd.z * MoveSpeed;
+        playWalkingSound(MoveSpeed);
     }
 
     this.player.update();
-    
+
     this.xrControls.update( delta );
 
     InputManager.update();
@@ -722,3 +804,4 @@ Game.prototype.mustRender = function()
 {
     return true;
 };
+
