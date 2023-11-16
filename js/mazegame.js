@@ -2,11 +2,6 @@ var SCALE = new THREE.Vector3( 1, 1, 1 );
 var maze;
 var gamewon = false;
 
-// Create an array to store heart elements
-var heartElements = [];
-
-var theme_sound = new Audio('res/sound/theme_Song.m4a');
-
 var Game = function(args)
 {
 
@@ -31,49 +26,14 @@ var Game = function(args)
 
     Asset.init();
 
-    for (var i = 0; i < this.player.health; i++) {
-        var heart = document.createElement('img');
-        heart.src = 'res/heart.png';
-        heart.style.width = '30px'; // Adjust the width based on your preference
-        heart.style.height = '30px'; // Adjust the height based on your preference
-        heart.style.position = 'absolute';
-        heart.style.top = '10px'; // Adjust the top position based on your preference
-        heart.style.right = (i * 40 + 10) + 'px'; // Adjust the right position for spacing
-        document.body.appendChild(heart);
-        heartElements.push(heart);
-    }
+    initializeUI();
+    createHearts(this.player.health);
 
     var light = new THREE.AmbientLight(0x202020);
     scene.add( light );
 
     this.player.light = new THREE.PointLight( 0xF5D576, 1.2 * SCALE.average(), 2.5899 * SCALE.average() );
 
-
-
-    /*
-
-    // Cube Sky
-
-    scene.background = new THREE.Color(0x1F2427);
-    var loader = new THREE.CubeTextureLoader();
-    var texture = loader.load([
-        "res/sky/sky_rt0001.png", // positive x
-        "res/sky/sky_lf0001.png", // negative x
-        "res/sky/sky_up0001.png", // positive y
-        "res/sky/sky_dn0001.png", // negative y
-        "res/sky/sky_ft0001.png", // positive z
-        "res/sky/sky_bk0001.png", // negative z
-    ]);
-    scene.background = texture;
-
-    var moonLight = new THREE.DirectionalLight(0x555577, 0.5);
-    moonLight.position.set(-1, 1, -1);
-    scene.add(moonLight);
-
-    scene.fog = new THREE.Fog(0x1F2427, 2, 20);
-    */
-
-    // Sphere Sky
     var skyTexture = Asset.texture( "sky/beautiful-shining-stars-night-sky.jpg" );
     skyTexture.wrapS = THREE.RepeatWrapping;
     skyTexture.wrapT = THREE.RepeatWrapping;
@@ -126,8 +86,6 @@ var Game = function(args)
 
     maze = generateMaze( args.width, args.height );
     var mazeWalls = [];
-
-
     var torchBuilder = new TorchBuilder();
 
     // Gaps
@@ -157,8 +115,6 @@ var Game = function(args)
     
     var actualMazeWidth = walls.length;
     var actualMazeHeight = walls[ 0 ].length;
-
-    console.log( walls );
 
 
     // ! WALLS ARE Z, X!
@@ -214,9 +170,6 @@ var Game = function(args)
             }
         }
     }
-
-    console.log( xw );
-    console.log( zw );
 
     var matrix = new THREE.Matrix4();
     var tmpgeom = new THREE.Geometry();
@@ -421,43 +374,6 @@ var Game = function(args)
     
     this.MOVESPEED = 1.5 * avgScaleXZ;
 
-
-    // Button and shortcut to disable sound
-    var sound_button = document.createElement('button');
-    sound_button.style.position = 'absolute';
-    sound_button.style.width = '100px'; // Set the width as a string with 'px'
-    sound_button.style.height = '50px'; // Adjusted the height for a more balanced look
-    sound_button.style.backgroundColor = 'transparent'; // Transparent background
-    sound_button.style.border = '2px solid #4CAF50'; // Green border
-    sound_button.style.color = '#4CAF50'; // Green text color
-    sound_button.style.fontSize = '20px'; // Adjusted font size
-    sound_button.style.borderRadius = '8px'; // Rounded corners
-    sound_button.style.cursor = 'pointer'; // Set cursor to pointer for better UX
-    sound_button.style.top = '10px'; // Adjusted top position
-    sound_button.style.left = '10px'; // Adjusted left position
-    sound_button.innerHTML = 'Sound on'; // Changed initial text
-    sound_button.onclick = function() {
-        if (theme_sound.muted) {
-            theme_sound.muted = false;
-            sound_button.innerHTML = 'Sound on';
-        } else {
-            theme_sound.muted = true;
-            sound_button.innerHTML = 'Sound off';
-        }
-    };
-
-    document.body.appendChild(sound_button);
-    //Play start voice
-    var start_voice = new Audio('res/sound/get_ready.mp3');
-    start_voice.volume = 0.7;
-    start_voice.play();
-
-    //Play theme song
-    theme_sound.volume = 0.2;
-    theme_sound.loop = true;
-    theme_sound.play();
-
-
 };
 
 Game.prototype.postXRInit = function() {
@@ -466,9 +382,11 @@ Game.prototype.postXRInit = function() {
     // Add fullscreen key
     THREEx.FullScreen.bindKey( { charCode : 'f'.charCodeAt( 0 ) } );
 
-    // init pointerlock
-    if ( requestPointerLock() ) {
-        new PointerLock();
+
+    // Initialize pointer lock
+    const pointerLockControl = new PointerLock({sensitivity: 0.002});
+    if (requestPointerLock(pointerLockControl)) {
+        console.info("PointerLock acquired successfully.")
     }
     
     // below code is for when WebXR is present
@@ -498,9 +416,6 @@ Game.prototype.onXRSessionChange = function( sessionType ) {
     
 };
 var collission_counter = 0;
-const collide_sound = new Audio('res/sound/toutchie.mp3');
-collide_sound.load();
-
 Game.prototype.playerCollides = function( dir, amount )
 {
 
@@ -519,69 +434,30 @@ Game.prototype.playerCollides = function( dir, amount )
     var distanceToEntrance = playerPosition.distanceTo(new THREE.Vector3(0, 0, 0));
 
     // If a collision is detected, play the sound and return true.
-    if (colliders.length > 0 && colliders[0].distance - 0.5 < amount){
-        collide_sound.volume = 1; // Set the volume (0-1)
+    if (colliders.length > 0 && colliders[0].distance - 0.5 < amount) {
         if (collide_sound.ended || collission_counter === 0) {
             collission_counter++;
             this.player.health--;
+
             if (this.player.health > 0) {
-                collide_sound.play().then(r => console.log("Played collision sound"));
-            }
-
-            else{
-
-                //Play lose voice and song
-                theme_sound.pause();
-                var lose_voice = new Audio('res/sound/Evil_Laugh.mp3');
-                lose_voice.volume = 0.5;
-                lose_voice.play();
-                var lose_song = new Audio('res/sound/Titanic_Song.mp3');
-                lose_song.volume = 1;
-                lose_song.play();
-
-                //display lose text and set the player ins nirvana
-                var lose_quote = document.createElement('div');
-                lose_quote.style.position = 'absolute';
-                lose_quote.style.width = 100;
-                lose_quote.style.height = 100;
-                lose_quote.style.color = "red";
-                lose_quote.style.fontSize = "50px";
-                lose_quote.style.top = 50 + '%';
-                lose_quote.style.left = 50 + '%';
-                lose_quote.style.transform = 'translate(-50%, -50%)';
-                lose_quote.innerHTML = "You Lost!";
-                document.body.appendChild(lose_quote);
+                playCollisionSound()
+            } else {
+                playLoseSound();
+                toggleLoseMessage(true);
                 this.player.position = 0;
             }
             updateHearts();
         }
         return true;
-    };
+    }
 
     // Check if the game is not won and the player has reached the target position.
     if (gamewon === false && distanceToTarget < 1.0) {
         gamewon = true;
-        console.log("Player reached the target position!");
-
-        // You could perform additional actions when the player reaches the target position.
-        const success_sound = new Audio('res/sound/duft_des_sieges.mp3');
-        success_sound.volume = 1; // Set the volume (0-1)
-        success_sound.load();
-        success_sound.play().then(r => console.log("Played success sound"));
-
-        // Display the text "You win!" centered on the Y and X axes in the window.
-        var win_quote = document.createElement('div');
-        win_quote.style.position = 'absolute';
-        win_quote.style.width = 100;
-        win_quote.style.height = 100;
-        win_quote.style.color = "yellow";
-        win_quote.style.fontSize = "50px";
-        win_quote.style.top = 50 + '%';
-        win_quote.style.left = 50 + '%';
-        win_quote.style.transform = 'translate(-50%, -50%)';
-        win_quote.innerHTML = "You win!";
-        document.body.appendChild(win_quote);
+        playSuccessSound()
+        toggleWinMessage(true)
     }
+
     //Check if Player left the maze at the entrance and play sound if the entrance_cpunter is over 0 TODO: fix the sound
     var entrance_counter = 0;
     if (distanceToEntrance < 1.0) {
@@ -594,22 +470,7 @@ Game.prototype.playerCollides = function( dir, amount )
         entrance_counter++;
     }
 
-
-
-
-
     return false;
-};
-
-// Function to update hearts based on player's health
-const updateHearts = () => {
-    for (let i = 0; i < heartElements.length; i++) {
-        if (i < gameObject.player.health) {
-            heartElements[i].style.display = 'block'; // Show the heart
-        } else {
-            heartElements[i].style.display = 'none'; // Hide the heart
-        }
-    }
 };
 
 Game.prototype.update = function( delta )

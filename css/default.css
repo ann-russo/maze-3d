@@ -1,9 +1,9 @@
 html, body {
   margin: 0;
-}
-
-body {
-  font-family: "sans-serif";
+  padding: 0;
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f0f0f0;
 }
 
 canvas {
@@ -15,112 +15,105 @@ canvas {
   display: none;
 }
 
-.button {
-  background: rgba(211, 211, 211, 0.75);
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  padding: 10px;
-}
-
-.button:hover {
-  background: rgba(211, 211, 211, 1);
-}
-
-.style-select {
-  background: rgba(238, 238, 238, 0.75);
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  display: inline-block;
-  overflow: hidden;
-  width: 120px;
-}
-
-.style-select select {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  font-size: 12pt;
-  padding: 5px 8px;
-  width: 100%;
-}
-
-.style-select select:focus {
-  outline: none;
-}
-
 #ui {
-  height: 100%;
-  left: 0px;
   position: absolute;
-  top: 0px;
+  top: 0;
+  left: 0;
   width: 100%;
-  font-family: 'Roboto', sans-serif;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#ui h1, #ui #controls {
+  pointer-events: auto;
 }
 
 #ui h1 {
-  font-size: 36pt;
-  text-align: center;
+  font-size: 30pt;
+  text-align: left;
   color: white;
+  margin-left: 20px;
+  font-family: 'Berkshire Swash', serif;
 }
 
 #ui #controls {
-  background: rgba(64, 64, 64, 0.5);
-  border-radius: 5px;
-  box-sizing: border-box;
-  left: 1em;
-  padding: 1em;
   position: absolute;
-  width: 15em;
-  color: white;
+  top: 90px;
+  left: 10px;
+  background: rgba(64, 64, 64, 0.7);
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 250px;
+  border-radius: 8px;
 }
 
-#ui #controls h3 {
+#controls h3 {
   text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
 }
 
-#ui #controls .control-description {
-  margin-left: 1em;
+.control {
+  margin-bottom: 20px;
 }
 
-#ui #game-info {
-  background: rgba(64, 64, 64, 0.5);
-  border-radius: 5px;
-  box-sizing: border-box;
-  padding: 1em;
-  position: absolute;
-  right: 1em;
-  width: 30em;
-}
-
-#ui #game-info h2,
-#ui #game-info h3 {
-  text-align: center;
-}
-
-#ui #game-info p {
-  font-size: 12pt;
-  margin-top: 2em;
-}
-
-#ui #overlay {
-  background: rgba(64, 64, 64, 0.75);
-  border-radius: 5px;
-  box-sizing: border-box;
-  left: 50%;
-  padding: 1em;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  transform: translate(-50%, -75%);
-  width: 36em;
-}
-
-#ui #overlay #overlay-board-selector {
-  font-size: 16pt;
+.control .key {
   font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
 }
 
-#ui #overlay #overlay-board-selector #overlay-play-button {
-  margin-top: 2em;
+.control .description {
+  margin-left: 30px;
+  text-align: left;
+  display: block;
+}
+
+#controls {
+  color: white
+}
+
+#soundButton {
+  width: 120px;
+  height: 50px;
+  background: #4CAF50;
+  border: 1px solid #ddd;
+  color: white;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-top: 400px;
+  pointer-events: auto;
+}
+
+#loseQuote {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  color: red;
+  font-size: 50px;
+  font-family: 'Berkshire Swash', serif;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center; /* Center the text horizontally */
+  line-height: 100px; /* Vertically center the text in the div */
+}
+
+#winQuote {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  color: #4CAF50;
+  font-size: 50px;
+  font-family: 'Berkshire Swash', serif;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: 100px;
 }
