@@ -6,7 +6,7 @@ const PointerLock = function (args) {
     this.sensitivity = args && args.sensitivity ? args.sensitivity : 0.002;
     this.pointerLockActive = false;
 
-    // Handles mouse movement events
+    // Handles mouse movement events.
     const onMouseMove = function (event) {
         if (!this.pointerLockActive) return;
 
@@ -17,7 +17,7 @@ const PointerLock = function (args) {
         gameObject.player.phi -= movementY * this.sensitivity;
 
         gameObject.player.phi = Math.constrainRadius(gameObject.player.phi, Math.TAU / 4);
-    }.bind(this); // Bind this function to the current context
+    }.bind(this);
 
     document.addEventListener("mousemove", onMouseMove, false);
 };
@@ -51,7 +51,7 @@ const requestPointerLock = function (pointerLockInstance) {
             pointerLockInstance.pointerLockActive = false;
         };
 
-        // Setting up event listeners for pointer lock changes and errors
+        // Setting up event listeners for pointer lock changes and errors.
         document.addEventListener('pointerlockchange', pointerlockchange, false);
         document.addEventListener('mozpointerlockchange', pointerlockchange, false);
         document.addEventListener('webkitpointerlockchange', pointerlockchange, false);

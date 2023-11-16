@@ -3,8 +3,11 @@ const start_voice = new Audio('res/sound/get_ready.mp3');
 const lose_voice = new Audio('res/sound/Evil_Laugh.mp3');
 const lose_song = new Audio('res/sound/Titanic_Song.mp3');
 const success_sound = new Audio('res/sound/duft_des_sieges.mp3');
+const left_by_entrance_sound = new Audio('res/sound/nur_gschaut.mp3');
 const collide_sound = new Audio('res/sound/toutchie.mp3');
+
 collide_sound.load();
+left_by_entrance_sound.load();
 
 /**
  * Plays the start voice.
@@ -21,6 +24,11 @@ function playThemeSong() {
     theme_sound.volume = 0.2;
     theme_sound.loop = true;
     theme_sound.play().catch(e => console.error('Error playing theme sound:', e));
+}
+
+function playEntranceSound() {
+    left_by_entrance_sound.volume = 1;
+    left_by_entrance_sound.play().catch(e => console.error('Error playing entrance sound:', e));
 }
 
 /**

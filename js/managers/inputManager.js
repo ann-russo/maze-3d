@@ -1,22 +1,22 @@
 /**
  * InputManager handles keyboard inputs for the game.
  */
-var InputManager = {
+const InputManager = {
     keys: {},
     oldKeys: {},
 
     /**
      * Updates the state of keys.
      */
-    update: function() {
-        this.oldKeys = { ...this.keys };
+    update: function () {
+        this.oldKeys = {...this.keys};
     },
 
     /**
      * Handles key down events.
      * @param {number} code - The key code of the pressed key.
      */
-    keyDown: function(code) {
+    keyDown: function (code) {
         this.keys[code] = true;
     },
 
@@ -24,7 +24,7 @@ var InputManager = {
      * Handles key up events.
      * @param {number} code - The key code of the released key.
      */
-    keyUp: function(code) {
+    keyUp: function (code) {
         this.keys[code] = false;
     },
 
@@ -33,7 +33,7 @@ var InputManager = {
      * @param {number} code - The key code to check.
      * @returns {boolean} True if the key is down, false otherwise.
      */
-    isKeyDown: function(code) {
+    isKeyDown: function (code) {
         return !!this.keys[code];
     },
 
@@ -42,7 +42,7 @@ var InputManager = {
      * @param {number} code - The key code to check.
      * @returns {boolean} True if the key was just pressed, false otherwise.
      */
-    isKeyPressed: function(code) {
+    isKeyPressed: function (code) {
         return !!this.keys[code] && !this.oldKeys[code];
     }
 };

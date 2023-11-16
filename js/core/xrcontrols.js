@@ -15,12 +15,12 @@ function XRControls(game, objectsToIntersectWith) {
  * Initializes the XR controllers.
  */
 XRControls.prototype.init = function() {
-    var controllerMesh = new THREE.Mesh(
+    const controllerMesh = new THREE.Mesh(
         new THREE.CubeGeometry(0.04, 0.04, 0.08),
-        new THREE.MeshBasicMaterial({ wireframe: true })
+        new THREE.MeshBasicMaterial({wireframe: true})
     );
 
-    var self = this;
+    const self = this;
 
     function setupControllerEvents(controller) {
         controller.addEventListener("connected", function() {
@@ -35,8 +35,8 @@ XRControls.prototype.init = function() {
         });
     }
 
-    for (var i = 0; i < 2; i++) {
-        var controller = renderer.xr.getController(i);
+    for (let i = 0; i < 2; i++) {
+        const controller = renderer.xr.getController(i);
         controller.raycaster = new THREE.Raycaster();
         controller.raycaster.near = 0.1;
         setupControllerEvents(controller);
@@ -52,7 +52,7 @@ XRControls.prototype.init = function() {
  */
 XRControls.prototype.handleControllerConnected = function(controller, controllerMesh) {
     controller.add(controllerMesh.clone());
-    var line = new THREE.Line(this.geom);
+    const line = new THREE.Line(this.geom);
     line.scale.set(0.2, 0.2, 0);
     controller.add(line);
     this.activeControllers.push(controller);
@@ -73,12 +73,12 @@ XRControls.prototype.handleControllerDisconnected = function(controller) {
  * @param {Object} controller - The controller used for teleportation.
  */
 XRControls.prototype.attemptTeleport = function(controller) {
-    var intersections = this.getIntersections(controller, this.objectsToIntersectWith);
+    const intersections = this.getIntersections(controller, this.objectsToIntersectWith);
     if (intersections.length === 0 || intersections[0].distance < 0.25 || intersections[0].object.uuid === this.objectsToIntersectWith[0].uuid) {
         return false;
     }
-    var headPosition = this.game.player.position;
-    var diff = intersections[0].point.clone().sub(headPosition);
+    const headPosition = this.game.player.position;
+    const diff = intersections[0].point.clone().sub(headPosition);
     diff.y = 0; // Don't move the y of the head
     this.game.player.position.add(diff);
 };
@@ -90,7 +90,7 @@ XRControls.prototype.attemptTeleport = function(controller) {
  * @returns {Array} An array of intersection results.
  */
 XRControls.prototype.getIntersections = function(controller, mesh) {
-    var mat = new THREE.Matrix4().identity().extractRotation(controller.matrixWorld);
+    const mat = new THREE.Matrix4().identity().extractRotation(controller.matrixWorld);
     controller.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
     controller.raycaster.ray.direction.set(0, 0, -1).applyMatrix4(mat);
     return Array.isArray(mesh) ? controller.raycaster.intersectObjects(mesh) : controller.raycaster.intersectObject(mesh);
@@ -103,8 +103,8 @@ XRControls.prototype.getIntersections = function(controller, mesh) {
 XRControls.prototype.update = function(delta) {
     if (this.activeControllers.length === 0) return;
 
-    var controller = this.activeControllers[this.controllerToCheck];
-    var intersections = this.getIntersections(controller, this.objectsToIntersectWith);
+    const controller = this.activeControllers[this.controllerToCheck];
+    const intersections = this.getIntersections(controller, this.objectsToIntersectWith);
 
     if (intersections.length === 0 || intersections[0].distance < 0.25 || intersections[0].object.uuid === this.objectsToIntersectWith[0].uuid) {
         controller.children[1].scale.z = 0;

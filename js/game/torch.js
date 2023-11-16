@@ -6,8 +6,7 @@ function TorchBuilder() {
     this.initialLightPos = new THREE.Vector3(0.37 * SCALE.x, (0.18 + 0.2) * SCALE.y, 0);
     const torchGeometry = new THREE.BoxGeometry(0.03 * SCALE.x, 0.25 * SCALE.y, 0.07 * SCALE.z);
 
-    // Load wood texture
-    const woodTexture = new THREE.TextureLoader().load('res/wood.jpeg');
+    const woodTexture = Asset.texture("wood.jpeg");
     woodTexture.wrapS = THREE.RepeatWrapping;
     woodTexture.wrapT = THREE.RepeatWrapping;
     woodTexture.repeat.set(2, 2);

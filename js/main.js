@@ -1,7 +1,7 @@
 // Global game object
 let gameObject;
 
-// ThreeJS essentials: camera, scene, renderer, and a timer for animations
+// ThreeJS essentials: camera, scene, renderer, and a timer for animations.
 let camera, scene, renderer, timer;
 
 // Flag to check if WebXR is available
@@ -11,30 +11,30 @@ let WEBXR_PRESENT = false;
  * Initializes the ThreeJS scene, camera, renderer, and event listeners.
  */
 function init() {
-    // Create a new ThreeJS scene
+    // Create a new ThreeJS scene.
     scene = new THREE.Scene();
 
-    // Initialize the camera with perspective projection
+    // Initialize the camera with perspective projection.
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
     scene.add(camera);
 
-    // Initialize the clock for managing animations
+    // Initialize the clock for managing animations.
     timer = new THREE.Clock();
 
-    // Set up the WebGL renderer and append it to the DOM
+    // Set up the WebGL renderer and append it to the DOM.
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Add event listener for window resize
+    // Add event listener for window resize.
     window.addEventListener("resize", onWindowResize, false);
 
-    // Parse URL parameters for customizing the maze dimensions and scale
+    // Parse URL parameters for customizing the maze dimensions and scale.
     const urlParams = new URLSearchParams(window.location.search);
     const dimensions = parseDimensions(urlParams.get("dimensions"));
     const scale = parseScale(urlParams.get("scale"));
 
-    // Initialize the game with parsed arguments
+    // Initialize the game with parsed arguments.
     gameObject = new Game({ width: dimensions.width, height: dimensions.height, scale: scale });
 }
 
@@ -92,8 +92,6 @@ function animate() {
     });
 }
 
-// Helper functions for parsing URL parameters
-
 /**
  * Parses maze dimensions from a string.
  * @param {string} dimensionString - The dimensions in the format "width,height".
@@ -132,7 +130,7 @@ function parseScale(scaleString) {
     return null;
 }
 
-// Initialize and start the game
+// Initialize and start the game.
 init();
 postInit();
 start();
