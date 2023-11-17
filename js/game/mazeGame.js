@@ -22,10 +22,13 @@ const Game = function (args) {
     // Initialize hacks mode based on arguments.
     this.hacks = !!args.hacks || false;
 
+    // Initialize the player.
+    this.player = new Player(camera,  initPlayerLight(SCALE), scene, this.maze);
+
     // Initialize assets, UI, and player life hearts.
     Asset.init();
     initializeUI();
-    createHearts(3);
+    createHearts(this.player.health);
 
     // Initialize game properties.
     this.maze = null
@@ -36,9 +39,6 @@ const Game = function (args) {
     initGame(this, args, scene, Asset);
     initAmbientLight(scene);
     initSkyAndMoonLight(scene);
-
-    // Initialize the player.
-    this.player = new Player(camera,  initPlayerLight(SCALE), scene, this.maze);
 };
 
 /**
@@ -94,7 +94,7 @@ Game.prototype.playerCollides = function(dir, amount) {
             } else {
                 playLoseSound();
                 toggleLoseMessage(true);
-                this.player.position.set(0, 0, 0);
+                this.player.position.set(-20000, -20000, -20000);
             }
             updateHearts();
         }
