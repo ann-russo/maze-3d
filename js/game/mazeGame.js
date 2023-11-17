@@ -206,25 +206,29 @@ Game.prototype.movePlayer = function(dir, MoveSpeed) {
     xProd.crossVectors(dir, new THREE.Vector3(0, 1.0, 0));
 
     // Forward and backward movement
-    if (InputManager.isKeyDown(87 /* w */) && !this.playerCollides(dir, MoveSpeed)) {
+    if (InputManager.isKeyDown(87 /* w */) && !this.playerCollides(dir, MoveSpeed) && this.player.health > 0) {
         // Move forward
         this.player.position.x += dir.x * MoveSpeed;
         this.player.position.z += dir.z * MoveSpeed;
-    } else if (InputManager.isKeyDown(83 /* s */) && !this.playerCollides(new THREE.Vector3(-dir.x, -dir.y, -dir.z), MoveSpeed)) {
+        playWalkingSound(MoveSpeed);
+    } else if (InputManager.isKeyDown(83 /* s */) && !this.playerCollides(new THREE.Vector3(-dir.x, -dir.y, -dir.z), MoveSpeed) && this.player.health > 0) {
         // Move backward
         this.player.position.x -= dir.x * MoveSpeed;
         this.player.position.z -= dir.z * MoveSpeed;
+        playWalkingSound(MoveSpeed);
     }
 
     // Left and right movement
-    if (InputManager.isKeyDown(65 /* a */) && !this.playerCollides(new THREE.Vector3(-xProd.x, -xProd.y, -xProd.z), MoveSpeed)) {
+    if (InputManager.isKeyDown(65 /* a */) && !this.playerCollides(new THREE.Vector3(-xProd.x, -xProd.y, -xProd.z), MoveSpeed) && this.player.health > 0) {
         // Move left
         this.player.position.x -= xProd.x * MoveSpeed;
         this.player.position.z -= xProd.z * MoveSpeed;
-    } else if (InputManager.isKeyDown(68 /* d */) && !this.playerCollides(xProd, MoveSpeed)) {
+        playWalkingSound(MoveSpeed);
+    } else if (InputManager.isKeyDown(68 /* d */) && !this.playerCollides(xProd, MoveSpeed) && this.player.health > 0) {
         // Move right
         this.player.position.x += xProd.x * MoveSpeed;
         this.player.position.z += xProd.z * MoveSpeed;
+        playWalkingSound(MoveSpeed);
     }
 };
 

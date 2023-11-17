@@ -5,9 +5,9 @@ const lose_song = new Audio('res/sound/Titanic_Song.mp3');
 const success_sound = new Audio('res/sound/duft_des_sieges.mp3');
 const left_by_entrance_sound = new Audio('res/sound/nur_gschaut.mp3');
 const collide_sound = new Audio('res/sound/toutchie.mp3');
-
-collide_sound.load();
-left_by_entrance_sound.load();
+const walking_sound = 'res/sound/walking.mp3';
+let isWalkingSoundPlaying;
+let audioContext;
 
 /**
  * Plays the start voice.
@@ -59,4 +59,58 @@ function playLoseSound() {
 
     lose_song.volume = 0.7;
     lose_song.play().catch(e => console.error('Error playing lose song:', e));
+}
+
+/**
+ * Plays a walking sound when the player moves.
+ * @param {number} moveSpeed - The speed of the player's movement.
+ */
+async function playWalkingSound(moveSpeed) {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    // If the sound is already playing, exit the function
+    if (isWalkingSoundPlaying) {
+        return;
+    }
+
+    isWalkingSoundPlaying = true;
+
+    // Loads the walking sound file and @returns {Promise<AudioBuffer>}
+    const walkingBuffer = await (async () => {
+        try {
+            const response = await fetch(walking_sound);
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = await audioContext.decodeAudioData(arrayBuffer);
+            return buffer;
+        } catch (error) {
+            console.error('Error loading walking audio:', error);
+        }
+    })();
+
+    const source = audioContext.createBufferSource();
+    source.buffer = walkingBuffer;
+
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.5;
+
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    try {
+        const speedMultiplier = 80;
+        const playbackRateValue = 0.4 * moveSpeed * speedMultiplier;
+        source.playbackRate.value = playbackRateValue;
+
+        const duration = source.buffer.duration / playbackRateValue;
+        source.start(0);
+
+        setTimeout(() => {
+            isWalkingSoundPlaying = false;
+        }, duration * 750);
+    } catch (error) {
+        console.error("Error playing walking audio:", error);
+        isWalkingSoundPlaying = false;
+    }
 }
