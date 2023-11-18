@@ -199,9 +199,9 @@ class Maze {
         // Use MeshPhongMaterial for the pyramid with the "bump.jpeg" texture and yellow color
         const pyramidMaterial = new THREE.MeshPhongMaterial({
             color: 0xffffff,
-            map: Asset.texture("ceiling_bump.jpeg"), // Apply the "bump.jpeg" texture
+            map: Asset.texture("ceiling_bump.jpeg"),
             bumpMap: Asset.texture("ceiling_bump.jpeg"),
-            bumpScale: 100, // Adjust the bumpScale as needed
+            bumpScale: 100,
             shininess: 15,
         });
 
@@ -222,7 +222,6 @@ class Maze {
         scene.add(mazeGroup);
 
         return new THREE.Mesh(mazeGeom, CubeMaterial);
-
     }
 
     /**
