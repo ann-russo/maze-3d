@@ -26,6 +26,9 @@ function playThemeSong() {
     theme_sound.play().catch(e => console.error('Error playing theme sound:', e));
 }
 
+/**
+ * Plays the maze entrance sound.
+ */
 function playEntranceSound() {
     left_by_entrance_sound.volume = 1;
     left_by_entrance_sound.play().catch(e => console.error('Error playing entrance sound:', e));
@@ -35,14 +38,30 @@ function playEntranceSound() {
  * Plays the collision sound.
  */
 function playCollisionSound() {
+    // Pause the theme sound and remember the current time.
+    const themeCurrentTime = theme_sound.currentTime;
+    theme_sound.pause();
+
+    // Set the volume and play the collision sound.
     collide_sound.volume = 1;
-    collide_sound.play().then(r => console.info("Played collision sound"));
+    collide_sound.play().then(() => {
+        console.info("Played collision sound");
+
+        // Add an event listener to the collision sound to detect when it ends.
+        collide_sound.onended = function() {
+            // Resume the theme sound from where it was paused.
+            theme_sound.currentTime = themeCurrentTime;
+            theme_sound.play().catch(e => console.error("Error resuming theme sound:", e));
+        };
+    }).catch(e => console.error("Error playing collision sound:", e));
 }
 
 /**
- * Plays the theme music on repeat.
+ * Plays the winning the game sound.
  */
 function playSuccessSound() {
+    theme_sound.pause()
+
     success_sound.volume = 1;
     success_sound.load();
     success_sound.play().catch(e => console.error('Error playing success sound:', e));
@@ -82,8 +101,7 @@ async function playWalkingSound(moveSpeed) {
         try {
             const response = await fetch(walking_sound);
             const arrayBuffer = await response.arrayBuffer();
-            const buffer = await audioContext.decodeAudioData(arrayBuffer);
-            return buffer;
+            return await audioContext.decodeAudioData(arrayBuffer);
         } catch (error) {
             console.error('Error loading walking audio:', error);
         }
@@ -113,4 +131,21 @@ async function playWalkingSound(moveSpeed) {
         console.error("Error playing walking audio:", error);
         isWalkingSoundPlaying = false;
     }
+}
+
+/**
+ * Pauses each sound and resets its progress.
+ */
+function stopAllSounds() {
+    theme_sound.pause();
+    theme_sound.currentTime = 0;
+
+    lose_song.pause();
+    lose_song.currentTime = 0;
+
+    lose_voice.pause();
+    lose_voice.currentTime = 0;
+
+    success_sound.pause();
+    success_sound.currentTime = 0;
 }

@@ -94,6 +94,7 @@ Game.prototype.playerCollides = function(dir, amount) {
             } else {
                 playLoseSound();
                 toggleLoseMessage(true);
+                toggleRestartButton(true);
                 this.player.position.set(-20000, -20000, -20000);
             }
             updateHearts();
@@ -106,6 +107,7 @@ Game.prototype.playerCollides = function(dir, amount) {
             gameWon = true;
             playSuccessSound();
             toggleWinMessage(true);
+            toggleRestartButton(true);
         }
     };
 
@@ -235,3 +237,9 @@ Game.prototype.movePlayer = function(dir, MoveSpeed) {
 Game.prototype.mustRender = function() {
     return true;
 };
+
+function resetValues() {
+    gameWon = false;
+    collisionCounter = 0;
+    entranceCounter = 0;
+}

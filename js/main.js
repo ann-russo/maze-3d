@@ -130,6 +130,24 @@ function parseScale(scaleString) {
     return null;
 }
 
+/**
+ * Resets the game to its initial state.
+ */
+function resetGame() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+    scene.add(camera);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const dimensions = parseDimensions(urlParams.get("dimensions"));
+    const scale = parseScale(urlParams.get("scale"));
+
+    gameObject = new Game({ width: dimensions.width, height: dimensions.height, scale: scale });
+
+    timer.stop();
+    timer.start();
+}
+
 // Initialize and start the game.
 init();
 postInit();

@@ -3,31 +3,82 @@
  * such as health indicators, sound buttons, win/lose messages, etc.
  */
 const soundButton = document.getElementById('soundButton');
+const restartButton = document.getElementById('restartButton');
+const controlsButton = document.getElementById('controlsButton');
+const controlsDescription = document.getElementById('controls');
+
 let isSoundOn = false;
 let heartElements = [];
+
+/**
+ * Toggles the game controls description div when the controlsButton is clicked.
+ */
+controlsButton.addEventListener('click', function(event) {
+    controlsDescription.style.display = controlsDescription.style.display === 'block' ? 'none' : 'block';
+    event.stopPropagation(); // Prevent click from immediately propagating to document
+});
+
+/**
+ * Hides the game controls description div when clicking anywhere on the screen.
+ */
+document.addEventListener('click', function(event) {
+    if (controlsDescription.style.display === 'block') {
+        controlsDescription.style.display = 'none';
+    }
+});
 
 /**
  * Toggles the game sound on and off, updates the button text and style.
  * Plays start voice and theme song when sound is turned on.
  */
 soundButton.addEventListener('click', function() {
+    const buttonText = document.getElementById('buttonText');
+    const buttonIcon = document.getElementById('buttonIcon');
     if (!isSoundOn) {
         playStartVoice();
         playThemeSong();
 
-        soundButton.innerHTML = 'Sound Off';
+        buttonText.textContent = 'Sound Off';
         soundButton.style.backgroundColor = 'red';
+        buttonIcon.src = 'res/icons/icons8-mute-50.png';
+
         theme_sound.muted = false;
         isSoundOn = true;
     } else {
         theme_sound.muted = true;
         start_voice.muted = true;
 
-        soundButton.innerHTML = 'Sound On';
+        buttonText.innerHTML = 'Sound On';
         soundButton.style.backgroundColor = '#4CAF50';
+        buttonIcon.src = 'res/icons/icons8-sound-50-2.png';
         isSoundOn = false;
     }
 });
+
+/**
+ * Resets all sounds, UI elements, values, and the game when the Restart Game button is clicked.
+ */
+restartButton.addEventListener('click', function() {
+    resetSoundButton()
+    toggleRestartButton(false)
+    toggleLoseMessage(false)
+    toggleWinMessage(false)
+    stopAllSounds()
+    resetValues()
+    resetGame()
+});
+
+/**
+ * Resets the appearance of the Sound button to its default state.
+ */
+function resetSoundButton() {
+    const buttonText = document.getElementById('buttonText');
+    const buttonIcon = document.getElementById('buttonIcon');
+    buttonText.innerHTML = 'Sound On';
+    soundButton.style.backgroundColor = '#4CAF50';
+    buttonIcon.src = 'res/icons/icons8-sound-50-2.png';
+    isSoundOn = false;
+}
 
 /**
  * Creates and displays heart elements for the health indicator.
@@ -66,8 +117,8 @@ const updateHearts = () => {
  * @param {boolean} isVisible - Whether the message should be visible.
  */
 function toggleWinMessage(isVisible) {
-    const winQuote = document.getElementById('winQuote');
-    winQuote.style.display = isVisible ? 'block' : 'none';
+    const winImage = document.getElementById('winImage');
+    winImage.style.display = isVisible ? 'block' : 'none';
 }
 
 /**
@@ -75,8 +126,12 @@ function toggleWinMessage(isVisible) {
  * @param {boolean} isVisible - Whether the message should be visible.
  */
 function toggleLoseMessage(isVisible) {
-    const loseQuote = document.getElementById('loseQuote');
-    loseQuote.style.display = isVisible ? 'block' : 'none';
+    const loseImage = document.getElementById('loseImage');
+    loseImage.style.display = isVisible ? 'block' : 'none';
+}
+
+function toggleRestartButton(isVisible) {
+    restartButton.style.display = isVisible ? 'block' : 'none';
 }
 
 /**

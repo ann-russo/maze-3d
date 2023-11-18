@@ -18,7 +18,19 @@
 <div id="ui">
     <h1>A-Maze-ing Escape</h1>
 
-    <div id="controls">
+    <div id="buttons">
+        <button id="controlsButton">
+            <img src="res/icons/icons8-info-50-2.png" id="infoIcon" alt="controlsInfo" width="30" height="30">
+            <span id="controlsButtonText">Game Controls</span>
+        </button>
+
+        <button id="soundButton">
+            <img src="res/icons/icons8-sound-50-2.png" id="buttonIcon" alt="sound" width="30" height="30">
+            <span id="buttonText">Sound On</span>
+        </button>
+    </div>
+
+    <div id="controls" style="display: none;">
         <h3>Game Controls</h3>
         <div class="control">
             <span class="key">W, A, S, D</span>
@@ -38,10 +50,9 @@
         </div>
     </div>
 
-    <button id="soundButton">Sound On</button>
-
-    <div id="winQuote">You Win!</div>
-    <div id="loseQuote">You Lost!</div>
+    <img id="loseImage" style="display: none;" alt="lost" src="res/lostMsg.png"/>
+    <img id="winImage" style="display: none;" alt="lost" src="res/winMsg.png"/>
+    <button id="restartButton" style="display: none">Restart Game</button>
 
 </div>
 

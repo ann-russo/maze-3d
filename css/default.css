@@ -4,6 +4,7 @@ html, body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   background-color: #f0f0f0;
+  position: relative;
 }
 
 canvas {
@@ -38,7 +39,7 @@ canvas {
 
 #ui #controls {
   position: absolute;
-  top: 90px;
+  top: 170px;
   left: 10px;
   background: rgba(64, 64, 64, 0.7);
   border: 1px solid #ddd;
@@ -75,45 +76,77 @@ canvas {
 }
 
 #soundButton {
-  width: 120px;
+  width: 150px;
   height: 50px;
   background: #4CAF50;
   border: 1px solid #ddd;
   color: white;
-  font-size: 20px;
+  font-size: 16px;
   border-radius: 8px;
   cursor: pointer;
-  margin-left: 10px;
-  margin-top: 400px;
   pointer-events: auto;
+  display: flex;
+  align-items: center;
 }
 
-#loseQuote {
-  display: none;
-  position: absolute;
-  width: 100%;
-  height: 100px;
-  color: red;
-  font-size: 50px;
-  font-family: 'Berkshire Swash', serif;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center; /* Center the text horizontally */
-  line-height: 100px; /* Vertically center the text in the div */
+#soundButton img {
+  margin-right: 8px;
 }
 
-#winQuote {
-  display: none;
+#controlsButton {
+  background: #007bff;
+  width: 180px;
+  height: 50px;
+  color: white;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+}
+
+#controlsButton img {
+  margin-right: 8px;
+}
+
+#restartButton {
+  background: transparent;
+  border-radius: 8px;
   position: absolute;
-  width: 100%;
-  height: 100px;
-  color: #4CAF50;
-  font-size: 50px;
-  font-family: 'Berkshire Swash', serif;
-  top: 50%;
+  color: whitesmoke;
+  width: 200px;
+  height: 50px;
+  font-size: 20px;
+  top: calc(50% + 60vw * 9 / 16);
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   text-align: center;
-  line-height: 100px;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 1002;
+}
+
+#loseImage, #winImage {
+  width: 100%;
+  height: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+}
+
+#buttons {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin-left: 10px;
+  gap: 10px;
+}
+
+#buttons button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
