@@ -115,10 +115,10 @@ class Maze {
     }
 
     /**
-     * Generates the geometry for the maze.
+     * Generates the geometry for the maze, including a rotated pyramid covering the entire maze.
      * @param {THREE.Vector3} SCALE - The scale of the maze.
      * @param {{init: (function(): void), textures: {}, texture: (function(string): Texture)}} Asset - The asset manager for textures and materials.
-     * @returns {THREE.Mesh} - The mesh representing the maze geometry.
+     * @returns {THREE.Group} - The group containing the mesh representing the maze geometry with a rotated pyramid.
      */
     generateMazeGeometry(SCALE, Asset) {
         // Initialize matrix and temporary geometry for merging.
@@ -187,7 +187,42 @@ class Maze {
         CubeMaterial.displacementMap = CubeBumpMap;
         CubeMaterial.displacementScale = 0;
 
+        const mazeMesh = new THREE.Mesh(mazeGeom, CubeMaterial);
+
+        // Add a rotated pyramid above the maze covering the entire maze
+        const pyramidGeometry = new THREE.ConeBufferGeometry(
+            Math.max(this.actualMazeWidth * SCALE.x, this.actualMazeHeight * SCALE.z) / 1.415,
+            Math.max(this.actualMazeWidth * SCALE.x, this.actualMazeHeight * SCALE.z),
+            4.8
+        );
+
+        // Use MeshPhongMaterial for the pyramid with the "bump.jpeg" texture and yellow color
+        const pyramidMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            map: Asset.texture("ceiling_bump.jpeg"), // Apply the "bump.jpeg" texture
+            bumpMap: Asset.texture("ceiling_bump.jpeg"),
+            bumpScale: 100, // Adjust the bumpScale as needed
+            shininess: 15,
+        });
+
+        const pyramidMesh = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
+        pyramidMesh.position.set(this.actualMazeWidth * SCALE.x / 2.125, Math.max(this.actualMazeWidth * SCALE.x, this.actualMazeHeight * SCALE.z) / 1.8888, this.actualMazeHeight * SCALE.z / 2.13);
+
+        // Set the rotation of the pyramid to 60 degrees on the Y-axis and a slight angle on the Z-axis
+        const rotationAngleX = THREE.MathUtils.degToRad(0);
+        const rotationAngleY = THREE.MathUtils.degToRad(135);
+        const rotationAngleZ = THREE.MathUtils.degToRad(0); // Adjust the angle as needed
+        pyramidMesh.rotation.set(rotationAngleX, rotationAngleY, rotationAngleZ);
+
+        // Group the maze and pyramid meshes
+        const mazeGroup = new THREE.Group();
+        mazeGroup.add(mazeMesh);
+        mazeGroup.add(pyramidMesh);
+
+        scene.add(mazeGroup);
+
         return new THREE.Mesh(mazeGeom, CubeMaterial);
+
     }
 
     /**
