@@ -62,13 +62,31 @@ function Torch(pos, angle, torchBuilder) {
     torchPos.add(pos);
     lightPos.add(pos);
 
-    const torch = torchBuilder.torchMesh.clone();
-    torch.position.copy(torchPos);
-    torch.rotation.setFromVector3(rotationVec);
+    this.torch = torchBuilder.torchMesh.clone();
+    this.torch.position.copy(torchPos);
+    this.torch.rotation.setFromVector3(rotationVec);
 
-    torchBuilder.geometry.mergeMesh(torch);
+    torchBuilder.geometry.mergeMesh(this.torch);
 
     this.light = torchBuilder.torchLight.clone();
     this.light.position.copy(lightPos);
     scene.add(this.light);
+
+    // Set up smooth flickering
+    const clock = new THREE.Clock();
+    const flickerSpeed = 2.0;
+
+    const updateFlicker = () => {
+        const flickerAmount = Math.sin(clock.getElapsedTime() * flickerSpeed) * 0.25 + 0.75;
+        this.light.intensity = flickerAmount * torchBuilder.torchLight.intensity;
+        requestAnimationFrame(updateFlicker);
+    };
+
+    updateFlicker();
 }
+
+// Stop the flickering when the torch is removed
+Torch.prototype.destroy = function () {
+    scene.remove(this.light);
+    scene.remove(this.torch);
+};
