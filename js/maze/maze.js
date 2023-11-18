@@ -115,10 +115,10 @@ class Maze {
     }
 
     /**
-     * Generates the geometry for the maze, including a rotated pyramid covering the entire maze.
+     * Generates the geometry for the maze, including a pyramid
      * @param {THREE.Vector3} SCALE - The scale of the maze.
      * @param {{init: (function(): void), textures: {}, texture: (function(string): Texture)}} Asset - The asset manager for textures and materials.
-     * @returns {THREE.Group} - The group containing the mesh representing the maze geometry with a rotated pyramid.
+     * @returns {THREE.Group} - The group containing the mesh representing the maze geometry and the pyramid
      */
     generateMazeGeometry(SCALE, Asset) {
         // Initialize matrix and temporary geometry for merging.
@@ -189,7 +189,7 @@ class Maze {
 
         const mazeMesh = new THREE.Mesh(mazeGeom, CubeMaterial);
 
-        // Add a rotated pyramid above the maze covering the entire maze
+        // Add a pyramid above the maze covering the entire maze
         const pyramidGeometry = new THREE.ConeBufferGeometry(
             Math.max(this.actualMazeWidth * SCALE.x, this.actualMazeHeight * SCALE.z) / 1.415,
             Math.max(this.actualMazeWidth * SCALE.x, this.actualMazeHeight * SCALE.z),
@@ -211,7 +211,7 @@ class Maze {
         // Set the rotation of the pyramid to 60 degrees on the Y-axis and a slight angle on the Z-axis
         const rotationAngleX = THREE.MathUtils.degToRad(0);
         const rotationAngleY = THREE.MathUtils.degToRad(135);
-        const rotationAngleZ = THREE.MathUtils.degToRad(0); // Adjust the angle as needed
+        const rotationAngleZ = THREE.MathUtils.degToRad(0);
         pyramidMesh.rotation.set(rotationAngleX, rotationAngleY, rotationAngleZ);
 
         // Group the maze and pyramid meshes
