@@ -1,138 +1,154 @@
-var g;
+// Global game object
+let gameObject;
 
-var camera, scene, renderer, timer;
+// ThreeJS essentials: camera, scene, renderer, and a timer for animations.
+let camera, scene, renderer, timer;
 
-var WEBXR_PRESENT = false;
+// Flag to check if WebXR is available
+let WEBXR_PRESENT = false;
 
-
-
-var init = function()
-{
+/**
+ * Initializes the ThreeJS scene, camera, renderer, and event listeners.
+ */
+function init() {
+    // Create a new ThreeJS scene.
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-    scene.add( camera );
+    // Initialize the camera with perspective projection.
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+    scene.add(camera);
 
+    // Initialize the clock for managing animations.
     timer = new THREE.Clock();
 
+    // Set up the WebGL renderer and append it to the DOM.
     renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    window.addEventListener( "resize", onWindowResize, false );
-    
-    
-    var urlParams = new URLSearchParams( window.location.search );
-    var dimensionString = urlParams.get( "dimensions" );
-    
-    var width = 8;
-    var height = 8;
-    
-    // Check if maze's dimensions have been specified in URL, if so apply them
-    if ( /\d+/.test( dimensionString ) ) {
-        
-        // width * height format (ex. ?dimensions="5,9")
-        if ( /\d+,\d+/.test( dimensionString ) ) {
-        
-            var arr = dimensionString.split( "," );
-            
-            width = parseInt( arr[ 0 ] );
-            height = parseInt( arr[ 1 ] );
-            
-        } else {
-            
-            // single digit format, set it as width and height
-            
-            width = height = parseInt( dimensionString );
-            
-        }
-        
-    }
-    
-    var args = { width: width, height: height };
-    
-    var scaleString = urlParams.get( "scale" );
-    
-    // scale format: x,y,z
-    if ( /\d+,\d+,\d+/.test( scaleString ) ) {
-        
-        var arr = scaleString.split( "," );
-        
-        args.scale = new THREE.Vector3(
-            parseInt( arr[ 0 ] ),
-            parseInt( arr[ 1 ] ),
-            parseInt( arr[ 2 ] )
-        );
-    }
-    
-    
-    g = new Game( args );
-    
-        
-};
+    // Add event listener for window resize.
+    window.addEventListener("resize", onWindowResize, false);
 
-var postInit = function() {
-    
-    if ( 'xr' in navigator ) {
+    // Parse URL parameters for customizing the maze dimensions and scale.
+    const urlParams = new URLSearchParams(window.location.search);
+    const dimensions = parseDimensions(urlParams.get("dimensions"));
+    const scale = parseScale(urlParams.get("scale"));
 
-        navigator.xr.isSessionSupported( 'immersive-vr' ).then( function ( supported ) {
+    // Initialize the game with parsed arguments.
+    gameObject = new Game({ width: dimensions.width, height: dimensions.height, scale: scale });
+}
 
+/**
+ * Handles additional initialization for XR if available.
+ */
+function postInit() {
+    if ('xr' in navigator) {
+        navigator.xr.isSessionSupported('immersive-vr').then(function(supported) {
             WEBXR_PRESENT = supported;
-            
-            import("../lib/VRButton.js")
-                .then((module) => {
-                    
-                    document.body.appendChild( module.VRButton.createButton( renderer, g.onXRSessionChange ) );
-                    
-                    renderer.xr.enabled = true;
-                    renderer.xr.setReferenceSpaceType( "local" );
-                    
-                }
-            );
-            
-            g.postXRInit();
 
-        } );
-    
+            if (supported) {
+                import("../lib/VRButton.js")
+                    .then((module) => {
+                        document.body.appendChild(module.VRButton.createButton(renderer, gameObject.onXRSessionChange));
+                        renderer.xr.enabled = true;
+                        renderer.xr.setReferenceSpaceType("local");
+                    });
+            }
+
+            gameObject.postXRInit();
+        });
     } else {
-        
-        g.postXRInit();
-        
+        gameObject.postXRInit();
     }
-    
-};
+}
 
-var onWindowResize = function()
-{
+/**
+ * Adjusts the camera and renderer size when the window is resized.
+ */
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
-};
-
-var start = function()
-{
+/**
+ * Starts the game timer.
+ */
+function start() {
     timer.start();
-};
+}
 
-var animate = function()
-{
-    renderer.setAnimationLoop( function() {
-        
-        var delta = timer.getDelta();
+/**
+ * Animation loop for rendering the scene.
+ */
+function animate() {
+    renderer.setAnimationLoop(function() {
+        const delta = timer.getDelta();
+        gameObject.update(delta);
 
-        g.update(delta);
-
-        if ( g.mustRender() )
-        {
-            renderer.render( scene, camera );
+        if (gameObject.mustRender()) {
+            renderer.render(scene, camera);
         }
-        
-    } );
-    
-};
+    });
+}
 
+/**
+ * Parses maze dimensions from a string.
+ * @param {string} dimensionString - The dimensions in the format "width,height".
+ * @returns {Object} An object containing width and height.
+ */
+function parseDimensions(dimensionString) {
+    let width = 8, height = 8;
 
+    if (/\d+/.test(dimensionString)) {
+        if (/\d+,\d+/.test(dimensionString)) {
+            const arr = dimensionString.split(",");
+            width = parseInt(arr[0]);
+            height = parseInt(arr[1]);
+        } else {
+            width = height = parseInt(dimensionString);
+        }
+    }
+
+    return { width: width, height: height };
+}
+
+/**
+ * Parses scale values from a string.
+ * @param {string} scaleString - The scale in the format "x,y,z".
+ * @returns {THREE.Vector3} A ThreeJS Vector3 object with scale values.
+ */
+function parseScale(scaleString) {
+    if (/\d+,\d+,\d+/.test(scaleString)) {
+        const arr = scaleString.split(",");
+        return new THREE.Vector3(
+            parseInt(arr[0]),
+            parseInt(arr[1]),
+            parseInt(arr[2])
+        );
+    }
+    return null;
+}
+
+/**
+ * Resets the game to its initial state.
+ */
+function resetGame() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+    scene.add(camera);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const dimensions = parseDimensions(urlParams.get("dimensions"));
+    const scale = parseScale(urlParams.get("scale"));
+
+    gameObject = new Game({ width: dimensions.width, height: dimensions.height, scale: scale });
+
+    timer.stop();
+    timer.start();
+}
+
+// Initialize and start the game.
 init();
 postInit();
 start();
